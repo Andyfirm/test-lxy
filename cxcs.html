@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+  var arr = ['a','b','c','a','d','c','c'];
+  var obj = {};
+  var cishu = 0; mingchen = '';  
+  for ( var i = 0; i < arr.length; i++ ) {
+    if(obj[arr[i]]) {
+      obj[arr[i]]++;
+    }else {
+      obj[arr[i]] = 1;
+    }
+  }
+  for (var key in obj) {
+    if (obj[key] > cishu) {
+      cishu = obj[key];
+      mingchen = key;
+    }
+  }
+  console.log('数组中出现次数最多项为'+ mingchen + '出现了' + cishu + '次');
+  var i = 1;
+  function getceshi () {
+  // var i = 1;
+  console.log(i);
+   i++;
+}
+getceshi();
+getceshi();
+getceshi();
+  </script>
+</body>
+</html>
