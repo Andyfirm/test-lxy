@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #canvas {
+      display: block;
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    var can = document.querySelector('canvas'); //获取画布
+    var ctx = can.getContext('2d'); //设置绘画环境
+    var wW = innerWidth,
+        wH = innerHeight; //获取浏览器宽度和高度
+    can.width = wW;
+    can.height = wH;
+    var count = 30; //雨滴的个数
+    var drops = []; //定义一个空数组存放雨滴个数
+    window.onresize = function() { //浏览器窗口改变时重新获取宽高度
+      wW = innerWidth,
+      wH = innerHeight;
+      can.width = wW;
+      can.height = wH;
+    }
+    function Drop() {}; //定义雨滴构造函数
+    Drop.prototype = {
+      init: function() { //初始化
+        this.x = random(0,wW); //x位置
+        this.y = 0; //y位置
+        this.r = 1; //初始半径
+        this.vy = random(4,5); //竖直方向加速度
+        this.vr = 1; //半径的加速度
+        this.a = 1; //初始透明度
+        this.va = 0.96; //透明度的变化系数
+        this.l = random(wH * 0.8, wH * 0.9); //雨滴下落的高度
+      },
+      draw: function() {
+        if (this.y > this.l) { //如果大于指定高度,开始渲染圆
+          ctx.beginPath(); //开始新路径渲染
+          ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false); //创建圆形
+          ctx.strokeStyle = "rgba(0, 255, 255, "+ this.a +")"; //设置笔触颜色
+          ctx.stroke(); //开始绘制
+        }else {
+          ctx.fillStyle = color(this.a); //设置填充颜色
+          ctx.fillRect(this.x, this.y, 2, 10); //绘制矩形
+        }
+        this.update();
+      },
+      update: function() { //更新坐标
+        if (this.y < this.l) { //如果小于指定高度,则继续下落
+          this.y += this.vy;
+        }else { //如果下落到指定高度后则进行扩散
+          if (this.a > 0.03) { //如果透明度大于0.03则增加半径
+            this.r += this.vr;
+            if (this.r > 50) { //如果半径大于50则透明度随之递减
+              this.a *= this.va;
+            }
+          }else { //如果透明度等于或小于0.03则回到初始化值
+            this.init();
+          }
+        }
+      }
+    };
+    function move() { //更新雨滴的位置
+      ctx.fillStyle = "rgba(0, 0, 0, .1)";
+      ctx.fillRect(0, 0, wW, wH);
+      for (var i = 0; i < drops.length; i++) {
+        drops[i].draw();
+      }
+      requestAnimationFrame(move);
+    }
+    function setUp() { //延迟产生每个雨滴
+      for (var i = 0; i < count; i++) {
+        (function(j) {
+          setTimeout(function() {
+           var drop = new Drop(); //创建雨滴实例对象
+           drop.init();
+           drops.push(drop);
+          }, j * 200);
+        })(i);
+      }
+    }
+    setUp();
+    move();
+    // 封装一个随机数方法
+    function random(min,max) {
+      return Math.random() * (max - min) + min;
+    }
+    // 封装一个随机颜色
+    function color(a) {
+      var r = Math.floor(Math.random() * 255);
+      var g = Math.floor(Math.random() * 255);
+      var b = Math.floor(Math.random() * 255);
+      return "rgba("+ r +","+ g +","+ b +","+ a +")" ;
+    }
+  </script>
+</body>
+</html>
